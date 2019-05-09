@@ -5,6 +5,7 @@ import java.util.Queue;
 import java.util.Stack;
 
 public class BinarySearchTree implements Operations, Traversals {
+	
 	private Node root;
 
 	@Override
@@ -158,6 +159,30 @@ public class BinarySearchTree implements Operations, Traversals {
 
 	@Override
 	public void verticalOrder(Node root) {
+		
+	}
+
+	@Override
+	public void morrisPreOrder(Node root) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void reverseLevelOrder(Node root) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void levelByLevelPrinting(Node root) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void reverseLevelByLevelPrinting(Node root) {
+		// TODO Auto-generated method stub
 		
 	}
 }
