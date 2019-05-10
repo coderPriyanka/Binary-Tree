@@ -7,41 +7,85 @@ import java.util.Stack;
 public class BinarySearchTree implements Operations, Traversals {
 	
 	private Node root;
-
+	
+	public Node getRoot() {
+		return root;
+	}
+	
 	@Override
-	public void insert(int data) {
-		Node newNode = new Node(data);
-		if(root == null) {
-			root = newNode;
-			return;
-		}
-		Node parent = findParentNode(root, data);
-		if(data <= parent.data) {
-			parent.leftChild = newNode;
-		}
-		else {
-			parent.rightChild = newNode;
-		}
+	public Node insert(int data) {
+		root = insert(root, data);
+		return root;
 	}
 
-	private Node findParentNode(Node root, int data) {
-		if(data < root.data && root.leftChild != null) {
-			return findParentNode(root.leftChild, data);
+	private Node insert(Node root, int data) {
+		if(root == null) {
+			root = new Node(data);
+			return root;
 		}
-		if(data > root.data && root.rightChild != null) {
-			return findParentNode(root.rightChild, data);
+		if(data < root.data) {
+			root.leftChild = insert(root.leftChild, data);
+		}
+		if(data > root.data) {
+			root.rightChild = insert(root.rightChild, data);
 		}
 		return root;
 	}
 
 	@Override
 	public boolean search(int data) {
-		return root != null && findParentNode(root, data).data == data;
+		return search(root, data);
+	}
+
+	private boolean search(Node root, int data) {
+		if(root == null) {
+			return false;
+		}
+		if(data == root.data) {
+			return true;
+		}
+		if(data < root.data) {
+			return search(root.leftChild, data);
+		}
+		return search(root.rightChild, data);
 	}
 
 	@Override
-	public boolean delete(int data) {
-		return false;
+	public Node delete(int data) {
+		return delete(root, data);
+	}
+
+
+	private Node delete(Node root, int data) {
+		if(root == null) {
+			return null;
+		}
+		if(data < root.data) {
+			root.leftChild = delete(root.leftChild, data);
+		}
+		else if(data > root.data) {
+			root.rightChild = delete(root.rightChild, data);
+		}
+		else {
+			if(root.leftChild == null) {
+				return root.rightChild;
+			}
+			if(root.rightChild == null) {
+				return root.leftChild;
+			}
+			Node node = findInorderPredecessor(root);
+			root.data = node.data;
+			root.leftChild = delete(root.leftChild, node.data);
+		}
+		return root;
+	}
+
+	private Node findInorderPredecessor(Node node) {
+		node = node.leftChild;
+		while(node.rightChild != null) {
+			node = node.rightChild;
+		}
+		return node;
 	}
 
 	@Override
