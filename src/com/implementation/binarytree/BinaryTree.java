@@ -1,7 +1,9 @@
 package com.implementation.binarytree;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedList;
+import java.util.List;
 import java.util.Map;
 import java.util.Queue;
 import java.util.Stack;
@@ -9,7 +11,11 @@ import java.util.Stack;
 public class BinaryTree implements Traversals {
 	
 	private Node root;
-	private static int index = 0;
+	static int index;
+	
+	public Node getRoot() {
+		return root;
+	}
 
 	@Override
 	public void preOrder(Node root) {
@@ -128,9 +134,6 @@ public class BinaryTree implements Traversals {
 
 	@Override
 	public void morrisPreOrder(Node root) {
-		if(root == null) {
-			return;
-		}
 		Node currNode = root;
 		while(currNode != null) {
 			if(currNode.leftChild == null) {
@@ -154,9 +157,6 @@ public class BinaryTree implements Traversals {
 	
 	@Override
 	public void morrisInOrder(Node root) {
-		if(root == null) {
-			return;
-		}
 		Node currNode = root;
 		while(currNode != null) {
 			if(currNode.leftChild == null) {
@@ -276,18 +276,18 @@ public class BinaryTree implements Traversals {
 		
 	}
 	
-	public Node constructTree(int[] inorder, int[] preorder, int size) {
+	public Node constructTreeFromInorderAndPreorder(int[] inorder, int[] preorder, int size) {
 		if(inorder == null || preorder == null || inorder.length == 0 || preorder.length == 0 || inorder.length != preorder.length) {
 			return null;
 		}
-		Map<Integer, Integer> dataToIndex = new HashMap<>();
+		Map<Integer, Integer> inorderIndex = new HashMap<>();
 		for(int i = 0; i < size; i++) {
-			dataToIndex.put(inorder[i], i);
+			inorderIndex.put(inorder[i], i);
 		}
-		return constructTree(inorder, preorder, 0, size - 1, dataToIndex);
+		return constructTreeFromInorderandPreorder(inorder, preorder, 0, size - 1, inorderIndex);
 	}
 
-	private Node constructTree(int[] inorder, int[] preorder, int start, int end, Map<Integer, Integer> dataToIndex) {
+	private Node constructTreeFromInorderandPreorder(int[] inorder, int[] preorder, int start, int end, Map<Integer, Integer> inorderIndex) {
 		if(start > end) {
 			return null;
 		}
@@ -295,9 +295,9 @@ public class BinaryTree implements Traversals {
 		if(start == end) {
 			return newNode;
 		}
-		int rootIndex = dataToIndex.get(newNode.data);
-		newNode.leftChild = constructTree(inorder, preorder, start, rootIndex - 1, dataToIndex);
-		newNode.rightChild = constructTree(inorder, preorder, rootIndex + 1, end, dataToIndex);
+		int rootIndex = inorderIndex.get(newNode.data);
+		newNode.leftChild = constructTreeFromInorderandPreorder(inorder, preorder, start, rootIndex - 1, inorderIndex);
+		newNode.rightChild = constructTreeFromInorderandPreorder(inorder, preorder, rootIndex + 1, end, inorderIndex);
 		return newNode;
 	}
 	
@@ -320,16 +320,60 @@ public class BinaryTree implements Traversals {
 		return root;
 	}
 	
-	public static void main(String[] args) {
-		BinaryTree tree = new BinaryTree();
-		int[] inorder = {5, 2, 7, 9, 10, 4};
-		int[] preorder = {9, 2, 5, 7, 4, 10};
-		Node treeRoot = tree.constructTree(inorder, preorder, inorder.length);
-		tree.inOrder(treeRoot);
-		System.out.println();
-		tree.preOrder(treeRoot);
-		System.out.println();
-		int arr[] = {10, 12, 15, 25, 30, 36}; 
-		tree.inOrder(tree.constructFromArray(arr));
+	public void printPostFromInAndPre(int[] inorder, int[] preorder, int size) {
+		if(inorder == null || preorder == null || inorder.length == 0 || preorder.length == 0 || inorder.length != preorder.length) {
+			return;
+		}
+		Map<Integer, Integer> inorderIndex = new HashMap<>();
+		for(int i = 0; i < size; i++) {
+			inorderIndex.put(inorder[i], i);
+		}
+		printPostFromInAndPre(inorder, preorder, 0, size - 1, inorderIndex);
+	}
+	
+	private void printPostFromInAndPre(int[] inorder, int[] preorder, int start, int end,
+			Map<Integer, Integer> inorderIndex) {
+		if(start > end) {
+			return;
+		}
+		int indexInorder = inorderIndex.get(preorder[index++]);
+		printPostFromInAndPre(inorder, preorder, start, indexInorder - 1, inorderIndex);
+		printPostFromInAndPre(inorder, preorder, indexInorder + 1, end, inorderIndex);
+		System.out.print(inorder[indexInorder] + " ");
+	}
+
+	public void constructTree() {
+		root = new Node(1);
+		root.leftChild = new Node(2);
+		root.rightChild = new Node(3);
+		root.leftChild.leftChild = new Node(4);
+		root.leftChild.rightChild = new Node(5);
+		root.rightChild.leftChild = new Node(6);
+		root.rightChild.rightChild = new Node(7);
+	}
+	
+	public Node newTreeWithNodeValueAsSumOfInorderPredecessorAndSuccessor() {
+		List<Node> nodesInorder = new ArrayList<>();
+		Node currNode = root;
+		while(currNode != null) {
+			if(currNode.leftChild == null) {
+				nodesInorder.add(currNode);
+				currNode = currNode.rightChild;
+			}
+			else {
+				Node rightmostNode = findRightmostNodeOfLeft(currNode);
+				if(rightmostNode.rightChild == null) {
+					rightmostNode.rightChild = currNode;
+					currNode = currNode.leftChild;
+				}
+				else {
+					System.out.print(currNode.data + " ");
+					rightmostNode.rightChild = null;
+					currNode = currNode.rightChild;
+				}
+			}
+		}
+		
+		return null;
 	}
 }
