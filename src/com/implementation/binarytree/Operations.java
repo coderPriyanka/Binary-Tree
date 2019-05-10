@@ -2,8 +2,8 @@ package com.implementation.binarytree;
 
 public interface Operations {
 	
-	void insert(int data);
+	Node insert(int data);
 	boolean search(int data);
-	boolean delete(int data);
+	Node delete(int data);
 
 }
